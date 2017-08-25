@@ -9,7 +9,7 @@ test('passes valid type (bench)', () => {
 });
 
 test('passes valid type (climb)', () => {
-    const entry = [["level", "v2"], ["times", 5]]
+    const entry = [["level", "v2"], ["times", 5]];
     const [valid, error] = checkSchema(entry, Climb);
     expect(error).toBe(null);
     expect(valid).toBe(true);

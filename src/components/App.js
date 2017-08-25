@@ -2,6 +2,8 @@
 import React, { Component } from 'react';
 import logo from './../logo.svg';
 import './../styles/App.css';
+import ExerciseInput from './einput';
+import {Bench} from './../fixtures/exercises';
 
 type Props = {}
 type State = {}
@@ -14,9 +16,9 @@ class App extends Component<Props, State> {
           <img src={logo} className="App-logo" alt="logo" />
           <h2>Welcome to Ejournal</h2>
         </div>
-        <p className="App-intro">
-            More Coming Soon
-        </p>
+        <div className="App-intro">
+          <ExerciseInput exercise={Bench}/>
+        </div>
       </div>
     );
   }
