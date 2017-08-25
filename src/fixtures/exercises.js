@@ -17,7 +17,9 @@ export const Climb: Exercise = [
 ]
 
 export const benchRecord: Record = [
-    ["weight", 1000],
-    ["reps", 10],
-    ["sets", 5]
+    "Bench" , [
+        ["weight", 1000],
+        ["reps", 10],
+        ["sets", 5]
+    ]
 ]

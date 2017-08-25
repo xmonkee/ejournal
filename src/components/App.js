@@ -1,27 +1,24 @@
 // @flow
+import type {Model} from './../model';
 import React, { Component } from 'react';
 import logo from './../logo.svg';
 import './../styles/App.css';
 import ExerciseInput from './einput';
-import {Bench} from './../fixtures/exercises';
+import { Bench } from './../fixtures/exercises';
 
-type Props = {}
+type Props = {model: Model}
 type State = {}
 
-class App extends Component<Props, State> {
-  render() {
+export default function App(props: Props) {
     return (
-      <div className="App">
-        <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to Ejournal</h2>
+        <div className="App">
+            <div className="App-header">
+                <img src={logo} className="App-logo" alt="logo" />
+                <h2>Welcome to Ejournal</h2>
+            </div>
+            <div className="App-intro">
+                <ExerciseInput exercise={Bench} />
+            </div>
         </div>
-        <div className="App-intro">
-          <ExerciseInput exercise={Bench}/>
-        </div>
-      </div>
     );
-  }
 }
-
-export default App;

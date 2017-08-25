@@ -15,23 +15,25 @@ export default function ExerciseInput({exercise}: Props) {
     const [exerciseName, schema] = exercise;
     return (
         <div>
-            {schema.map(([fieldName, fieldType], idx) => renderField(fieldName, fieldType))}
+            {schema.map(([fieldName, fieldType], idx) => 
+            {<RenderField key={idx} fieldName={fieldName} fieldType={fieldType} />}
+            }
         </div>
     );
 }
 
-function renderField(fieldName: FieldName, fieldType: FieldType) {
+function RenderField({fieldName, fieldType}) {
     switch (fieldType) {
         case 'string':
-           return renderString(fieldName);
+            return <StringField fieldName={fieldName} />;
         case 'number':
-            return renderNumber(fieldName);
+            return <NumberField fieldName={fieldName} />;
         default:
-            return renderInvalid(fieldName);
+            return <InvalidField fieldName={fieldName} />;
     }
 }
 
-function renderString(fieldName){
+function StringField({fieldName}){
     return (
         <div>
             <div>String</div>
@@ -40,7 +42,7 @@ function renderString(fieldName){
     )
 }
 
-function renderNumber(fieldName){
+function NumberField({fieldName}){
     return (
         <div>
             <div>Number</div>
@@ -49,7 +51,7 @@ function renderNumber(fieldName){
     )
 }
 
-function renderInvalid(fieldName) {
+function InvalidField({fieldName}) {
     return (
         <div>INVALID</div>
     )
