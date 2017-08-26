@@ -6,7 +6,7 @@ import type {
         Exercise,
         Record
 } from './types/etypes';
-import {moment} from 'moment';
+import moment from 'moment';
 
 import { Bench, Climb } from './fixtures/exercises';
 import { benchRecord } from './fixtures/exercises';
@@ -16,11 +16,11 @@ export type Model = {
     records: {[Moment]: Array<Record>}
 }
 
-const now : Moment = moment();
+const today : Moment = moment();
 
 const model: Model = {
     exercises: { 'Bench': Bench, 'Climb': Climb },
-    records: {now: [benchRecord]}
+    records: {[today]: [benchRecord]}
 }
 
 export default model;

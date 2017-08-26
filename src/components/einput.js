@@ -1,22 +1,18 @@
 // @flow
 
-import React, {Component} from 'react';
-import type {
-    Exercise,
-    FieldName,
-    FieldType
-} from './../types/etypes';
+import React from 'react';
+import type { Exercise } from './../types/etypes';
 
 type Props = {
     exercise: Exercise,
 }
 
 export default function ExerciseInput({exercise}: Props) {
-    const [exerciseName, schema] = exercise;
+    const [{}, schema] = exercise;
     return (
         <div>
-            {schema.map(([fieldName, fieldType], idx) => 
-            {<RenderField key={idx} fieldName={fieldName} fieldType={fieldType} />}
+            {
+                schema.map(([fieldName, fieldType], idx) => (<RenderField key={idx} fieldName={fieldName} fieldType={fieldType} />))
             }
         </div>
     );
