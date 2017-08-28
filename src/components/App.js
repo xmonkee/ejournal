@@ -1,16 +1,15 @@
 // @flow
 import type {Model} from './../model';
 import React from 'react';
-import logo from './../logo.svg';
 import ExerciseInput from './einput';
-import { Bench } from './../fixtures/exercises';
+import { Climb } from './../fixtures/';
 
 type Props = {model: Model}
 
-export default function App(props: Props) {
+export default function App(_: Props) {
     return (
         <div>
-            <ExerciseInput exercise={Bench} />
+            <ExerciseInput exercise={Climb} />
         </div>
     );
 }

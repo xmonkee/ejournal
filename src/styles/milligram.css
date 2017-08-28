@@ -259,6 +259,10 @@ input[type='radio'] {
   margin-left: .5rem;
 }
 
+.error {
+  border-color: #ff0000 !important;
+}
+
 .container {
   margin: 0 auto;
   max-width: 112.0rem;
