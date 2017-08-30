@@ -1,65 +1,56 @@
+import {ModelError} from './model';
 import {model} from './fixtures/';
 import * as exercises from './fixtures/';
 
 it('validates record', () => {
-    const response = model.validateRecord(exercises.benchRecord);
-    expect(response.status).toBe("success");
+    model.validateRecord(exercises.benchRecord);
 });
 
 it('validates record', () => {
-    const response = model.validateRecord(exercises.climbRecord);
-    expect(response.status).toBe("success"); 
+    model.validateRecord(exercises.climbRecord);
 });
 
 it('fails validation for bad schema', () => {
-    const response = model.validateRecord(exercises.badClimbRecord); 
-    expect(response.status).toBe("failure"); 
-    expect(response.message).toContain("Schema mismatch");
+    expect(() => model.validateRecord(exercises.badClimbRecord)).toThrow(/Bad Schema/);
 });
 
 it('fails validation for missing exercise', () => {
-    const response = model.validateRecord(exercises.badClimbRecord2); 
-    expect(response.status).toBe("failure"); 
-    expect(response.message).toContain("not found");
+    expect(() => model.validateRecord(exercises.badClimbRecord2)).toThrow(/not found/);
 });
 
 it('updates record', () => {
     // Pre update model check
     const date = '20170101';
-    const originalRecord = model.records[date][0];
+    const originalRecord = model.records.get(date).get(0);
     expect(originalRecord[0]).toBe('Bench');
 
-    const response = model.updateRecord(
+    const newModel = model.withRecord(
         '20170101', 0,
         ['Climb', [['level', 'v10'], ['times', 100]]]
     );
-    const newRecord = model.records[date][0];
+    const newRecord = newModel.records.get(date).get(0);
 
     // Post update model check
-    expect(response.status).toBe("success"); 
     expect(newRecord[0]).toBe('Climb');
 });
 
 it('fails update for invalid idx', () => {
-    const response = model.updateRecord(
+    expect(() => model.withRecord(
         '20170101', 
-        model.records['20170101'].length,
+        model.records.get('20170101').size,
         exercises.climbRecord
-    );
-    expect(response.status).toBe("failure"); 
-    expect(response.message).toContain('not found for')
+    )).toThrow(ModelError);
 });
  
 it('inserts record', () => {
     const date = '20170101';
-    const originalRecordsForDate = model.records[date];
-    const originalNumberOfRecords = originalRecordsForDate.length;
+    const originalRecordsForDate = model.records.get(date);
+    const originalNumberOfRecords = originalRecordsForDate.size;
 
-    const response = model.insertValidRecord(date, exercises.climbRecord);
-    expect(response.status).toBe('success');
+    const newModel = model.addRecord(date, exercises.climbRecord);
 
-    const newRecordsForDate = model.records[date];
-    const newNumberOfRecords = newRecordsForDate.length;
+    const newRecordsForDate = newModel.records.get(date);
+    const newNumberOfRecords = newRecordsForDate.size;
     expect(newNumberOfRecords).toBe(originalNumberOfRecords + 1);
-    expect(newRecordsForDate[newRecordsForDate.length-1]).toBe(exercises.climbRecord);
+    expect(newRecordsForDate.get(newRecordsForDate.size-1)).toBe(exercises.climbRecord);
 });

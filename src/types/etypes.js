@@ -1,11 +1,12 @@
 // @flow
+import {List} from 'immutable';
 export type FieldName = string;
 export type FieldType = 'string'|'number';
 export type FieldValue = string | number; 
 export type ExerciseName = string;
-export type Schema = Array<[FieldName, FieldType]>;
+export type Schema = List<[FieldName, FieldType]>;
 export type Exercise = [ExerciseName, Schema];
-export type RecordData = Array<[FieldName, FieldValue]>;
+export type RecordData = List<[FieldName, FieldValue]>;
 export type Record = [ExerciseName, RecordData];
 export type Response = {status: "success"} | {status: "failure", message: string};
 export type EDate = string;
@@ -23,18 +24,28 @@ Exercise: ${JSON.stringify(exercise)}`
     };
 }
 
-function hasSameSchema(record, exercise): boolean {
+export function hasSameSchema(record: Record, exercise: Exercise): boolean {
     const [rExerciseName: ExerciseName, recordData: RecordData] = record;
     const [eExerciseName: ExerciseName, schema: Schema] = exercise;
-    if (rExerciseName !== eExerciseName) {
-        return false;
-    }
-    if (recordData.length !== schema.length) {
-        return false;
-    }
-    for (let i = 0; i < recordData.length; i++) {
-        const [recordDataFieldName, fieldValue] = recordData[i];
-        const [schemaFieldName, fieldType] = schema[i];
+    return (
+        hasSameExerciseName(rExerciseName, eExerciseName) &&
+        hasSameNumberOfFields(recordData, schema) &&
+        hasSameFieldTypes(recordData, schema)
+    );
+}
+
+function hasSameExerciseName(rExerciseName, eExerciseName) {
+    return rExerciseName === eExerciseName;
+}
+
+function hasSameNumberOfFields(recordData, schema) {
+    return recordData.size === schema.size;
+}
+
+function hasSameFieldTypes(recordData, schema) {
+    for (let i = 0; i < recordData.size; i++) {
+        const [recordDataFieldName, fieldValue] = recordData.get(i);
+        const [schemaFieldName, fieldType] = schema.get(i);
         if (recordDataFieldName !== schemaFieldName || !isFieldType(fieldValue, fieldType)) {
                 return false;
             }

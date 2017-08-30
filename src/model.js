@@ -1,59 +1,60 @@
 // @flow
 
 import type {
-    ExerciseName, Exercise, Record, Response, EDate
+    ExerciseName, Exercise, Record, EDate
 } from './types/etypes';
-import { checkSchema } from './types/etypes';
+import {List, Map} from 'immutable';
+import { hasSameSchema } from './types/etypes';
+
+export type Exercises = Map<ExerciseName, Exercise>;
+export type Records = Map<EDate, List<Record>>;
+
+class ModelError extends Error{
+}
 
 export class Model {
-    exercises: {[ExerciseName]: Exercise}
-    records: {[EDate]: Array<Record>}
+    exercises: Exercises
+    records: Records
 
-    constructor(exercises: {[ExerciseName]: Exercise}, records: {[EDate]: Array<Record>}) {
+    constructor(exercises: Exercises, records: Records) {
         this.exercises = exercises;
         this.records = records
     }
 
-    updateRecord(date: EDate, idx: number, record: Record): Response {
-        const response = this.validateRecord(record);
-        if (response.status === 'failure') {
-            return response;
-        } 
-        return this.updateValidRecord(date, idx, record);
-    }
-
-    updateValidRecord(date: EDate, idx: number, record: Record): Response {
-        const recordsForDate = this.records[date] || [];
-        if (idx > recordsForDate.length - 1) {
-            return {
-                status: "failure",
-                message: `Record #${idx+1} not found for ${date}`
-            };
+    withRecord(date: EDate, idx: number, record: Record): Model {
+        this.validateRecord(record);
+        const recordsForDate = this.records.get(date) || List();
+        if (idx > recordsForDate.size - 1) {
+            throw new ModelError(`Record #${idx+1} not found for ${date}`)
         }
-        recordsForDate[idx] = record;
-        return {status: "success"};
+        const newRecordsForDate = recordsForDate.set(idx, record);
+        return this.withRecordsForDate(date, newRecordsForDate);
     }
 
-    inserRecord(date: EDate, record: Record): Response {
-        const response = this.validateRecord(record);
-        if (response.status === 'failure') {
-            return response;
-        } 
-        return this.insertValidRecord(date, record);
+    withRecordsForDate(date: EDate, recordsForDate: List<Record>) : Model {
+        const newRecords = this.records.set(date, recordsForDate);
+        return this.withRecords(newRecords);
     }
 
-    insertValidRecord(date: EDate,record: Record): Response {
-        const recordsForDate = this.records[date] || [];
-        recordsForDate.push(record);
-        return {status: "success"};
+    withRecords(records: Records) : Model {
+        return new Model(this.exercises, records);
     }
 
-    validateRecord(record: Record): Response {
+    addRecord(date: EDate, record: Record): Model {
+        this.validateRecord(record);
+        const recordsForDate = this.records.get(date) || List();
+        const newRecordsForDate = recordsForDate.push(record);
+        return this.withRecordsForDate(date, newRecordsForDate);
+    }
+
+    validateRecord(record: Record): void {
         const [exerciseName: ExerciseName] = record;
-        const exercise = this.exercises[exerciseName];
+        const exercise = this.exercises.get(exerciseName);
         if (!exercise) {
-            return {status: "failure", message: `Exercise ${exerciseName} not found`};
+            throw new ModelError(`Exercise ${exerciseName} not found`);
         }
-        return checkSchema(record, exercise);
+        if (!hasSameSchema(record, exercise)) {
+            throw new ModelError(`Bad Schema`);
+        }
     }
 }
