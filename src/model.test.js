@@ -1,4 +1,6 @@
-import {ModelError} from './model';
+// @flow
+
+import {List} from 'immutable';
 import {model} from './fixtures/';
 import * as exercises from './fixtures/';
 
@@ -11,11 +13,11 @@ it('validates record', () => {
 });
 
 it('fails validation for bad schema', () => {
-    expect(() => model.validateRecord(exercises.badClimbRecord)).toThrow(/Bad Schema/);
+    expect(() => model.validateRecord(exercises.badClimbRecord)).toThrow();
 });
 
 it('fails validation for missing exercise', () => {
-    expect(() => model.validateRecord(exercises.badClimbRecord2)).toThrow(/not found/);
+    expect(() => model.validateRecord(exercises.badClimbRecord2)).toThrow();
 });
 
 it('updates record', () => {
@@ -25,8 +27,8 @@ it('updates record', () => {
     expect(originalRecord[0]).toBe('Bench');
 
     const newModel = model.withRecord(
-        '20170101', 0,
-        ['Climb', [['level', 'v10'], ['times', 100]]]
+        date, 0,
+        ['Climb', List([['level', 'v10'], ['times', 100]])]
     );
     const newRecord = newModel.records.get(date).get(0);
 
@@ -39,7 +41,7 @@ it('fails update for invalid idx', () => {
         '20170101', 
         model.records.get('20170101').size,
         exercises.climbRecord
-    )).toThrow(ModelError);
+    )).toThrow();
 });
  
 it('inserts record', () => {

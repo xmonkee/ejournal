@@ -2,7 +2,7 @@
 import {List} from 'immutable';
 export type FieldName = string;
 export type FieldType = 'string'|'number';
-export type FieldValue = string | number; 
+export type FieldValue = string | number | null; 
 export type ExerciseName = string;
 export type Schema = List<[FieldName, FieldType]>;
 export type Exercise = [ExerciseName, Schema];

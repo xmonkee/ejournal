@@ -2,19 +2,20 @@
 
 import type { Exercise, Record, FieldName, FieldType, FieldValue } from './../types/etypes';
 import React from 'react';
-import {List} from 'immutable';
 import { Container, Row, Column } from './elements/grid';
 import Input from './elements/input';
 import NumberInput from './elements/number-input';
 
 type Props = {
+    idx: number,
     exercise: Exercise,
     record: Record,
-    handleUpdateRecord: (Record) => void
+    handleUpdateRecord: (number, Record) => void,
+    handleAddRecord: (Record) => void
 }
 
 type State = {
-    recordData: List<[FieldName, FieldValue]>
+    record: Record
 }
 
 function InvalidType(fieldName: FieldName, fieldType: FieldType) {
@@ -25,32 +26,46 @@ function InvalidType(fieldName: FieldName, fieldType: FieldType) {
 export default class RecordLine extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
-        const [_, recordData] = this.props.record;
-        this.state = {recordData: recordData};
+        const {record} = this.props;
+        this.state = {record: record};
     }
 
     setFieldValue(idx: number, fieldName: FieldName, fieldValue: FieldValue) {
-        const newRecordData = this.state.recordData.set(idx, [fieldName, fieldValue]);
-        this.setState({recordData: newRecordData});
+        const [recordName, recordData] = this.state.record;
+        const newRecord = [
+            recordName,
+            recordData.set(idx, [fieldName, fieldValue])
+        ];
+        this.setState({ record: newRecord});
     }
 
     render() {
-        const [exerciseName, schema] = this.props.exercise;
-        const recordData = this.state.recordData;
+        const {exercise, idx, handleUpdateRecord} = this.props;
+        const {record} = this.state;
+        const [_, recordData] = record;
+        const [exerciseName, schema] = exercise;
         return (
             <Container>
-            <Row>{exerciseName}</Row>
+                <Row>{exerciseName}</Row>
                 <Row>
-                    {recordData.map(([fieldName, fieldValue], idx) =>
-                        <Column key={idx}>
-                            <RenderField
-                                fieldName={fieldName}
-                                fieldType={schema.get(idx)[1]}
-                                value={fieldValue}
-                                onChange={(value: FieldValue) => this.setFieldValue(idx, fieldName, value)}
-                            />
-                        </Column>
-                    )}
+                    <Column>
+                        <Row>
+                            {recordData.map(([fieldName, fieldValue], n) =>
+                                <Column key={n}>
+                                    <RenderField
+                                        fieldName={fieldName}
+                                        fieldType={schema.get(n)[1]}
+                                        value={fieldValue}
+                                        onChange={(value: FieldValue) => 
+                                            this.setFieldValue(n, fieldName, value)}
+                                    />
+                                </Column>
+                            )}
+                        </Row>
+                    </Column>
+                    <Column>
+                        <button onClick={() => handleUpdateRecord(idx, record)}>Save</button>
+                    </Column>
                 </Row>
             </Container>
         );
@@ -58,12 +73,12 @@ export default class RecordLine extends React.Component<Props, State> {
 }
 
 
-function RenderField({ fieldName, fieldType }) {
+function RenderField({ fieldName, fieldType, ...otherProps }) {
     switch (fieldType) {
         case 'string':
-            return <Input label={fieldName} />;
+            return <Input label={fieldName} {...otherProps} />;
         case 'number':
-            return <NumberInput label={fieldName} />;
+            return <NumberInput label={fieldName} {...otherProps} />;
         default:
             throw new InvalidType(fieldName, fieldType);
     }

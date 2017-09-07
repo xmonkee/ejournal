@@ -32,6 +32,7 @@ export default class App extends Component<Props, State> {
             <div>
                 <RecordsBrowser 
                 records={this.state.model.records} 
+                exercises={this.state.model.exercises}
                 handleAddRecord={this.handleAddRecord.bind(this)}
                 handleUpdateRecord={this.handleUpdateRecord.bind(this)}
                 />

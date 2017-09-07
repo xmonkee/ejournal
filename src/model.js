@@ -9,8 +9,7 @@ import { hasSameSchema } from './types/etypes';
 export type Exercises = Map<ExerciseName, Exercise>;
 export type Records = Map<EDate, List<Record>>;
 
-class ModelError extends Error{
-}
+export class ModelError extends Error{}
 
 export class Model {
     exercises: Exercises

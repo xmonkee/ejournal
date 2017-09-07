@@ -1,19 +1,33 @@
+// @flow
 import type {Record} from './../types/etypes';
-import type {List} from 'immutable';
+import type {Exercises} from './../model';
+import type {List } from 'immutable';
 import React from 'react';
-import {RecordLine} from './record-line';
+import RecordLine from './record-line';
+import {Row} from './elements/grid';
 
 type Props = {
-    records: List<Records>,
+    exercises: Exercises,
+    records: List<Record>,
     handleAddRecord: (Record) => void,
     handleUpdateRecord: (number, Record) => void
 };
 
 export default function DayBrowser(props: Props) {
-    const {records, handleAddRecords, handleUpdateRecords} = props;
+    const { records, exercises, handleAddRecord, handleUpdateRecord } = props;
     return (
-        records.map((record: Record, idx: number) => 
-        (<RecordLine key={idx}/>)
-    )
+        <div>
+            {records.map((record: Record, idx: number) =>
+                (<Row key={idx}>
+                    <RecordLine
+                        idx={idx}
+                        record={record}
+                        exercise={exercises.get(record[0])}
+                        handleAddRecord={handleAddRecord}
+                        handleUpdateRecord={handleUpdateRecord}
+                    />
+                </Row>)
+            )}
+        </div>
     );
 }
